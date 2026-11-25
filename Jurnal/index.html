@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Maktab jurnali</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg1:#0a1330;--bg2:#2563eb;--glass:rgba(255,255,255,.10);--bd:rgba(255,255,255,.22);--tx:#fff;--mut:rgba(255,255,255,.62);--ac:#4da3ff;--ok:#34d399;--no:#fb7185;color-scheme:dark}
+[data-theme=pink]{--bg1:#0b0b10;--bg2:#ec4899;--ac:#ff5fa8}
+[data-theme=white]{--bg1:#f1f4f9;--bg2:#bcd8ff;--glass:rgba(255,255,255,.6);--bd:rgba(255,255,255,.95);--tx:#111827;--mut:rgba(17,24,39,.55);--ac:#007aff;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;color:var(--tx);
+background:radial-gradient(60% 40% at 15% 0%,var(--bg2) 0,transparent 70%),radial-gradient(50% 35% at 100% 30%,var(--ac) 0,transparent 70%),var(--bg1);
+background-attachment:fixed;padding:calc(env(safe-area-inset-top,0px) + 14px) 14px calc(env(safe-area-inset-bottom,0px) + 96px)}
+.wrap{max-width:820px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+h1{font-size:22px;margin:0;font-weight:700}
+.dots{display:flex;gap:8px}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--bd);cursor:pointer}
+.dot.on{outline:2px solid var(--tx);outline-offset:2px}
+.card{background:var(--glass);border:1px solid var(--bd);border-radius:20px;padding:14px;margin-bottom:12px;
+-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.row:last-child,.srow:last-child{border-bottom:0}
+.srow{padding:10px 0;border-bottom:1px solid var(--bd)}
+.sh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.name{font-size:15px;flex:1;min-width:0;word-break:break-word}
+.sub{font-size:12px;color:var(--mut)}
+input{width:100%;background:var(--glass);border:1px solid var(--bd);color:var(--tx);border-radius:14px;padding:11px 12px;font-size:15px;margin-bottom:8px;outline:0}
+button{font:inherit;color:var(--tx);background:var(--glass);border:1px solid var(--bd);border-radius:14px;padding:9px 14px;cursor:pointer}
+button.pri{background:var(--ac);border-color:transparent;color:#fff;font-weight:600}
+.st{min-width:54px;font-size:18px}
+.st.ok{background:rgba(52,211,153,.3)}.st.no{background:rgba(251,113,133,.3)}
+.g{display:flex;gap:5px;margin-top:8px}.g button{flex:1;padding:8px 0;text-align:center;border-radius:12px;font-weight:600}
+.g button.on{background:var(--ac);color:#fff;border-color:transparent}
+.dash{margin-top:8px;text-align:center;color:var(--mut);font-size:14px;padding:8px 0;border:1px dashed var(--bd);border-radius:12px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;white-space:nowrap;border-radius:999px;padding:8px 15px;font-size:14px}
+.chip.on{background:var(--ac);color:#fff;border-color:transparent;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.champs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.champ{text-align:center;padding:12px 6px;margin:0;font-size:13px}
+.champ .em{font-size:28px;margin:4px 0}
+.seg{display:flex;gap:4px;margin-bottom:10px}.seg button{flex:1;padding:8px 4px}
+.seg button.on{background:var(--ac);color:#fff;border-color:transparent}
+.cl,.cl2{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.chev{font-size:26px;color:var(--mut)}
+.bk{margin-bottom:12px}
+.sj{margin-bottom:12px}.sjh{display:flex;justify-content:space-between;font-size:15px;margin-bottom:5px}
+.bar{height:8px;border-radius:6px;background:var(--bd);overflow:hidden}.bar i{display:block;height:100%;border-radius:6px}
+.nav{position:fixed;left:12px;right:12px;max-width:620px;margin:0 auto;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;gap:2px;padding:6px;border-radius:26px;
+background:var(--glass);border:1px solid var(--bd);-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%)}
+.nav button{flex:1;border:0;background:transparent;border-radius:20px;padding:8px 0;font-size:11px}
+.nav button.on{background:var(--ac);color:#fff;font-weight:600}
+.nav span{display:block;font-size:19px}
+h3{margin:0 0 10px;font-size:16px}
+.empty{color:var(--mut);text-align:center;padding:18px 0;font-size:14px}
+.x{color:var(--no);border:0;background:transparent;padding:6px}
+.toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translate(-50%,-70px);opacity:0;background:var(--ok);color:#06281c;font-weight:600;padding:9px 18px;border-radius:20px;font-size:14px;transition:.25s;z-index:9}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.av{border-radius:50%;overflow:hidden;flex:none;box-shadow:0 4px 14px rgba(0,0,0,.3);border:2px solid var(--bd)}
+.av.f{background:linear-gradient(135deg,#ff9ccf,#ec4899)}.av.m{background:linear-gradient(135deg,#7cc0ff,#2563eb)}.av.n{background:linear-gradient(135deg,#a1a8b5,#6b7280)}
+.av svg{display:block;width:100%;height:100%}
+.who{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0}.who b{font-size:17px}
+.gen{display:flex;gap:10px;margin-bottom:12px;width:100%}.gen button{flex:1;padding:14px 0;font-size:16px}
+.gen button.on.f{background:#ec4899;color:#fff;border-color:transparent}.gen button.on.m{background:#2563eb;color:#fff;border-color:transparent}
+.center{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.pw{position:relative;width:100%}.pw input{padding-right:50px}.pw button{position:absolute;right:4px;top:3px;border:0;background:transparent;padding:8px 10px;font-size:18px}
+.rk{display:flex;align-items:center;justify-content:space-between;gap:8px;border-radius:16px;padding:13px 14px;margin-bottom:8px}
+.r1{background:linear-gradient(135deg,rgba(255,215,0,.42),rgba(255,160,0,.18));border:1px solid rgba(255,215,0,.65);box-shadow:0 0 18px rgba(255,200,0,.28)}
+.r2{background:linear-gradient(135deg,rgba(255,45,75,.4),rgba(190,0,40,.18));border:1px solid rgba(255,80,100,.6);box-shadow:0 0 16px rgba(255,40,70,.22)}
+.r3{background:linear-gradient(120deg,rgba(168,85,247,.42),rgba(56,189,248,.32),rgba(244,114,182,.38));border:1px solid rgba(205,160,255,.65);box-shadow:0 0 18px rgba(168,85,247,.28)}
+.lock{margin-top:8px;text-align:center;padding:8px 0;border-radius:12px;background:var(--glass);border:1px solid var(--bd);font-size:15px}
+.pt{font-size:16px;white-space:nowrap}
+.gb{display:inline-flex;flex-direction:column;align-items:center;margin:8px 6px 0 0;padding:5px 11px;border-radius:12px;border:1px solid var(--bd);background:var(--glass);font-weight:700;font-size:17px}
+.gb small{font-size:10px;font-weight:400;color:var(--mut)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.md{max-width:360px;width:100%;text-align:center;background:var(--bg1);border:1px solid var(--bd);border-radius:24px;padding:22px 18px}
+.md p{margin:10px 0 0;line-height:1.45;font-size:15px}
+.btns{display:flex;gap:10px;margin-top:18px}.btns button{flex:1;padding:12px 0}
+@media(min-width:768px){
+body{padding-left:28px;padding-right:28px}
+h1{font-size:30px}.name,.sjh{font-size:17px}.sub{font-size:14px}.card{padding:22px;border-radius:26px}
+.champ{font-size:16px;padding:20px 10px}.champ .em{font-size:40px}
+.g button{padding:11px 0}.nav button{font-size:13px}.chips{flex-wrap:wrap;overflow:visible}
+input{font-size:17px;padding:13px 14px}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast">✅ Saqlandi</div>
+<div class="wrap" id="app"></div>
+<script>
+const tg = window.Telegram && Telegram.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+// O'qituvchilar Telegram ID ro'yxati. Bo'sh bo'lsa hamma kira oladi (sinov rejimi).
+const ADMIN_IDS = [];
+const uid = tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : null;
+
+const SUBJ = ["Қуръони карим","Араб тили — луғат","Араб тилида ёзиш","«Муаллим Соний»","Тажвид","Ҳадис","Тавҳид",
+"Рус тилида ёзиш","Лотин ёзувида ёзиш","Математика","Меҳнат","Расм чизиш","Жисмоний тарбия","Ислом одоблари","Дуолар"];
+
+const MIN_AGE = 8; // o'qituvchi uchun eng kam yosh
+const fresh = () => ({ theme: "blue", classes: [], subjects: SUBJ.map((n, i) => ({ id: "s" + i, name: n, book: "" })), att: {}, gr: {} });
+let R = null;
+try { R = JSON.parse(localStorage.getItem("jurnal2")); } catch (e) {}
+if (!R || !R.list) R = { ts: 0, list: [], cur: null, data: {} };
+let S = null, PR = null;
+function useAcc() { const a = R.list.find(x => x.id === R.cur); S = a && R.data[a.id] ? R.data[a.id] : null; PR = a ? a.p : null; if (!S) R.cur = null; }
+useAcc();
+
+// Saqlash: telefon xotirasiga + Telegram bulutiga (boshqa qurilmada ham ochiladi)
+let cT, tT;
+const cloud = () => tg && tg.CloudStorage && tg.isVersionAtLeast && tg.isVersionAtLeast("6.9") ? tg.CloudStorage : null;
+function cloudSave() {
+  const cs = cloud(); if (!cs) return;
+  try {
+    const js = JSON.stringify(R), n = Math.ceil(js.length / 3500);
+    for (let i = 0; i < n; i++) cs.setItem("j" + i, js.slice(i * 3500, (i + 1) * 3500));
+    cs.setItem("jn", String(n));
+  } catch (e) {}
+}
+function save(toast) {
+  R.ts = Date.now();
+  try { localStorage.setItem("jurnal2", JSON.stringify(R)); } catch (e) {}
+  clearTimeout(cT); cT = setTimeout(cloudSave, 800);
+  if (toast) { const t = document.getElementById("toast"); t.classList.add("on"); clearTimeout(tT); tT = setTimeout(() => t.classList.remove("on"), 1100); }
+}
+function cloudLoad() {
+  const cs = cloud(); if (!cs) return;
+  cs.getItem("jn", (err, v) => {
+    const n = +v; if (err || !n) { if (R.list.length) cloudSave(); return; }
+    const keys = [...Array(n).keys()].map(i => "j" + i);
+    cs.getItems(keys, (e2, o) => {
+      if (e2) return;
+      try {
+        const c = JSON.parse(keys.map(k => o[k]).join(""));
+        if (!c.list) return;
+        if ((c.ts || 0) > (R.ts || 0)) { R = c; useAcc(); try { localStorage.setItem("jurnal2", JSON.stringify(R)); } catch (e) {} render(); }
+        else if ((c.ts || 0) < (R.ts || 0)) cloudSave();
+      } catch (e) {}
+    });
+  });
+}
+
+const today = new Date().toLocaleDateString("sv");
+let ui = { tab: "home", cls: null, subj: null, date: today, rk: "day", cv: null, sv: null, scr: "acc", lg: null, ob: { first: "", last: "", phone: "", age: "", g: "", pw: "", pw2: "" } };
+const uidgen = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const curCls = () => S.classes.find(c => c.id === ui.cls) || S.classes[0];
+const curSubj = () => S.subjects.find(s => s.id === ui.subj) || S.subjects[0];
+const viewCls = () => S.classes.find(c => c.id === ui.cv);
+const addDays = (d, n) => { const x = new Date(d + "T00:00:00"); x.setDate(x.getDate() + n); return x.toLocaleDateString("sv"); };
+const col = a => a >= 4.5 ? "var(--ok)" : a >= 3.5 ? "var(--ac)" : a >= 2.5 ? "#fbbf24" : "var(--no)";
+
+// Ball = kelgan kun x 5 + baholar yig'indisi (kelmagan kunlardagi baholar hisobga olinmaydi)
+function stats(c, from, to) {
+  return c.students.map(s => {
+    let p = 0, g = 0, n = 0;
+    for (const d in S.att) if (d >= from && d <= to && S.att[d][s.id] === 1) p++;
+    for (const k in S.gr) {
+      const d = k.split("|")[0]; if (d < from || d > to) continue;
+      const v = S.gr[k][s.id];
+      if (v && (S.att[d] || {})[s.id] !== 0) { g += v; n++; }
+    }
+    return { s, p, n, avg: n ? g / n : 0, score: p * 5 + g };
+  }).sort((a, b) => b.score - a.score || b.avg - a.avg || a.s.name.localeCompare(b.s.name));
+}
+// fanlar bo'yicha baholar: {fanId: {g, n}}
+function agg(ids) {
+  const r = {};
+  for (const k in S.gr) {
+    const [d, sj] = k.split("|");
+    ids.forEach(id => {
+      const v = S.gr[k][id];
+      if (v && (S.att[d] || {})[id] !== 0) { const o = r[sj] = r[sj] || { g: 0, n: 0 }; o.g += v; o.n++; }
+    });
+  }
+  return r;
+}
+const tot = r => { let g = 0, n = 0; for (const j in r) { g += r[j].g; n += r[j].n; } return n ? g / n : 0; };
+function subjBars(r) {
+  const rows = S.subjects.filter(s => r[s.id] && r[s.id].n).map(s => {
+    const a = r[s.id].g / r[s.id].n;
+    return `<div class="sj"><div class="sjh"><span>${esc(s.name)}</span><b style="color:${col(a)}">${a.toFixed(1)}</b></div>
+    <div class="bar"><i style="width:${a * 20}%;background:${col(a)}"></i></div><div class="sub">${r[s.id].n} ta baho</div></div>`;
+  });
+  return rows.join("") || `<div class="empty">Hali baho qo'yilmagan</div>`;
+}
+
+// Profil rasmi: yuklangan rasm yoki standart (yuzsiz) rasm: ayol - pushti, erkak - ko'k
+function avatar(sz, p) {
+  p = p || {};
+  const st = `width:${sz}px;height:${sz}px`;
+  if (p.photo) return `<div class="av" style="${st};background:url(${p.photo}) center/cover"></div>`;
+  const c = p.gender === "f" ? "f" : p.gender === "m" ? "m" : "n";
+  return `<div class="av ${c}" style="${st}"><svg viewBox="0 0 100 100"><circle cx="50" cy="38" r="17" fill="#fff" fill-opacity=".92"/><path d="M14 100c2-24 16-34 36-34s34 10 36 34z" fill="#fff" fill-opacity=".92"/></svg></div>`;
+}
+const gbtn = (g, a) => `<button class="f ${g === "f" ? "on" : ""}" data-a="${a}" data-id="f">👩 Ayol</button><button class="m ${g === "m" ? "on" : ""}" data-a="${a}" data-id="m">👨 Erkak</button>`;
+function readPhoto(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      const c = document.createElement("canvas"), z = 160; c.width = c.height = z;
+      const m = Math.min(im.width, im.height);
+      c.getContext("2d").drawImage(im, (im.width - m) / 2, (im.height - m) / 2, m, m, 0, 0, z, z);
+      PR.photo = c.toDataURL("image/jpeg", .75); save(true); render();
+    };
+    im.src = r.result;
+  };
+  r.readAsDataURL(file);
+}
+const normPhone = v => { let d = String(v || "").replace(/\D/g, ""); if (d.length === 9) d = "998" + d; return d.length >= 11 && d.length <= 15 ? "+" + d : ""; };
+const fmtPhone = p => /^\+998\d{9}$/.test(p || "") ? `+998 ${p.slice(4, 6)} ${p.slice(6, 9)} ${p.slice(9, 11)} ${p.slice(11)}` : (p || "");
+const maskPhone = p => p.length > 8 ? p.slice(0, 6) + "•".repeat(p.length - 8) + p.slice(-2) : p;
+const pwf = (id, ph, v) => `<div class="pw"><input id="${id}" type="password" placeholder="${ph}" value="${esc(v || "")}"><button data-a="eye" data-id="${id}">👁</button></div>`;
+const readOb = () => { ui.ob = { ...ui.ob, first: val("obf"), last: val("obl"), phone: val("obt"), age: val("oba"), pw: val("obp"), pw2: val("obq") }; };
+function vReg() {
+  const o = ui.ob;
+  return (R.list.length ? `<button class="bk" data-a="toacc">‹ Akkauntlar</button>` : "") + `<div class="card center" style="margin-top:3vh">${avatar(100, { gender: o.g })}
+  <h3 style="font-size:22px;margin:0">${R.list.length ? "Yangi akkaunt" : "Xush kelibsiz!"}</h3><div class="sub">O'qituvchi ma'lumotlarini kiriting</div>
+  <input id="obf" placeholder="Ism" value="${esc(o.first)}"><input id="obl" placeholder="Familiya" value="${esc(o.last)}">
+  <input id="obt" type="tel" inputmode="tel" placeholder="Telefon: +998 90 123 45 67" value="${esc(o.phone)}">
+  <input id="oba" type="number" inputmode="numeric" placeholder="Yoshingiz (kamida ${MIN_AGE})" value="${esc(o.age)}">
+  <div class="gen">${gbtn(o.g, "obg")}</div>
+  ${pwf("obp", "Parol (kamida 4 belgi)", o.pw)}${pwf("obq", "Parolni takrorlang", o.pw2)}
+  <button class="pri" style="width:100%" data-a="obgo">Ro'yxatdan o'tish</button></div>`;
+}
+function vAccs() {
+  return `<div class="top"><h1>👥 Akkauntlar</h1></div>` + R.list.map(a => `<div class="card cl" data-a="tologin" data-id="${a.id}"><div class="who">${avatar(48, a.p)}<div><b>${esc(a.p.first)} ${esc(a.p.last)}</b>
+  <div class="sub">${a.p.gender === "f" ? "Ayol" : "Erkak"}, ${a.p.age} yosh${a.p.phone ? " · " + maskPhone(a.p.phone) : ""}</div></div></div><span class="chev">›</span></div>`).join("")
+  + `<button class="pri" style="width:100%" data-a="toreg">➕ Yangi akkaunt</button>`;
+}
+function vLogin() {
+  const a = R.list.find(x => x.id === ui.lg); if (!a) { ui.scr = "acc"; return vAccs(); }
+  return `<button class="bk" data-a="toacc">‹ Akkauntlar</button><div class="card center" style="margin-top:3vh">${avatar(100, a.p)}
+  <h3 style="font-size:22px;margin:0">${esc(a.p.first)} ${esc(a.p.last)}</h3><input id="lgt" type="tel" inputmode="tel" placeholder="Telefon: +998 90 123 45 67">${pwf("lgp", "Parol", "")}<button class="pri" style="width:100%" data-a="login">Kirish</button></div>`;
+}
+const rnd = () => Array.from(crypto.getRandomValues(new Uint8Array(8)), x => x.toString(16).padStart(2, "0")).join("");
+async function hp(pw, salt) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt + pw));
+  return Array.from(new Uint8Array(b), x => x.toString(16).padStart(2, "0")).join("");
+}
+function enter(id) { R.cur = id; useAcc(); Object.assign(ui, { tab: "home", cls: null, subj: null, cv: null, sv: null, pend: null, msg: null, date: today, rk: "day" }); }
+async function doReg() {
+  readOb(); const o = ui.ob, age = parseInt(o.age, 10), f = o.first.trim(), l = o.last.trim();
+  let err = "";
+  if (!f || !l) err = "Ism va familiyani yozing.";
+  else if (!(age >= MIN_AGE && age <= 100)) err = `O'qituvchi kamida ${MIN_AGE} yoshda bo'lishi kerak.`;
+  else if (!normPhone(o.phone)) err = "Telefon raqamni to'g'ri kiriting (masalan +998 90 123 45 67).";
+  else if (R.list.some(x => x.p.phone === normPhone(o.phone))) err = "Bu raqam bilan akkaunt allaqachon ochilgan.";
+  else if (!o.g) err = "Jinsni tanlang.";
+  else if (o.pw.length < 4) err = "Parol kamida 4 belgidan iborat bo'lsin.";
+  else if (o.pw !== o.pw2) err = "Parollar bir xil emas.";
+  if (err) { ui.msg = err; render(); return; }
+  const id = uidgen(), salt = rnd();
+  R.list.push({ id, salt, hash: await hp(o.pw, salt), p: { first: f, last: l, phone: normPhone(o.phone), age, gender: o.g, photo: "" } });
+  const d = fresh(); // yangi akkaunt: hamma narsa yangi
+  d.theme = o.g === "f" ? "pink" : "blue";
+  R.data[id] = d; enter(id);
+  ui.ob = { first: "", last: "", phone: "", age: "", g: "", pw: "", pw2: "" };
+  save(true); render();
+}
+async function doLogin() {
+  const a = R.list.find(x => x.id === ui.lg); if (!a) return;
+  const ph = normPhone(val("lgt"));
+  if (!ph || (a.p.phone && a.p.phone !== ph) || await hp(val("lgp"), a.salt) !== a.hash) { ui.msg = "Telefon raqam yoki parol noto'g'ri."; render(); return; }
+  if (!a.p.phone) a.p.phone = ph;
+  enter(a.id); save(false); render();
+}
+
+function vProf() {
+  const p = PR;
+  return `<button class="bk" data-a="tab" data-id="home">‹ Orqaga</button>
+  <div class="card center">${avatar(110, p)}<input type="file" id="pf" accept="image/*" hidden>
+  <div style="display:flex;gap:8px"><button class="pri" data-a="pickphoto">📷 Rasm tanlash</button>${p.photo ? `<button class="x" data-a="delphoto">O'chirish</button>` : ""}</div>
+  ${p.photo ? "" : `<div class="sub">Rasm qo'ymasangiz, standart rasm turadi</div>`}</div>
+  <div class="card"><h3>Profil</h3>${p.phone ? `<div class="sub" style="margin-bottom:8px">📞 ${fmtPhone(p.phone)}</div>` : ""}<input id="pfn" placeholder="Ism" value="${esc(p.first)}"><input id="pfl" placeholder="Familiya" value="${esc(p.last)}">
+  <input id="pfa" type="number" inputmode="numeric" placeholder="Yosh" value="${esc(p.age)}">
+  <div class="gen">${gbtn(p.gender, "pgender")}</div><button class="pri" style="width:100%" data-a="psave">Saqlash</button><button class="x" style="width:100%;margin-top:10px;font-size:16px" data-a="logout">🚪 Akkauntdan chiqish</button></div>`;
+}
+
+function stuBars(sid) {
+  const by = {};
+  Object.keys(S.gr).sort().forEach(k => { const [d, sj] = k.split("|"), v = S.gr[k][sid]; if (v) (by[sj] = by[sj] || []).push({ d, v }); });
+  const rows = S.subjects.filter(s => by[s.id]).map(s => {
+    const l = by[s.id], a = l.reduce((x, y) => x + y.v, 0) / l.length;
+    return `<div class="card"><div class="sjh"><b>${esc(s.name)}</b><b style="color:${col(a)}">${a.toFixed(1)}</b></div><div class="bar"><i style="width:${a * 20}%;background:${col(a)}"></i></div>
+    <div>${l.map(x => `<span class="gb" style="color:${col(x.v)}">${x.v}<small>${x.d.slice(5).split("-").reverse().join(".")}</small></span>`).join("")}</div></div>`;
+  });
+  return rows.length ? `<h3 style="margin:4px 4px 10px">Qaysi fandan qanday baho oldi</h3>` + rows.join("") : `<div class="card empty">Hali baho qo'yilmagan</div>`;
+}
+
+function clsPicker() {
+  if (!S.classes.length) return `<div class="card empty">Avval "Sinflar" bo'limida guruh va o'quvchi qo'shing</div>`;
+  const c = curCls();
+  return `<div class="card"><div class="chips">${S.classes.map(x => `<button class="chip ${x.id === c.id ? "on" : ""}" data-a="pcls" data-id="${x.id}">${esc(x.name)}</button>`).join("")}</div>
+  <input type="date" value="${ui.date}" data-c="date" style="margin:0"></div>`;
+}
+function subjPicker() {
+  const sb = curSubj();
+  return `<div class="card"><div class="sub" style="margin-bottom:6px">Fan:</div><div class="chips">${S.subjects.map(x => `<button class="chip ${x.id === sb.id ? "on" : ""}" data-a="subj" data-id="${x.id}">${esc(x.name)}</button>`).join("")}</div>
+  ${sb.book ? `<div class="sub">📖 ${esc(sb.book)}</div>` : ""}</div>`;
+}
+// Baho tugmalari. Faqat kelgan o'quvchiga baho qo'yiladi, kelmaganda "–" turadi
+function gline(s, sb) {
+  const at = (S.att[ui.date] || {})[s.id];
+  if (at !== 1) return `<div class="dash">${at === 0 ? "–" : "– davomat belgilang"}</div>`;
+  const v = (S.gr[ui.date + "|" + sb.id] || {})[s.id];
+  if (v) return `<div class="lock">🔒 Baho: <b style="color:${col(v)}">${v}</b></div>`;
+  return `<div class="g">${[1, 2, 3, 4, 5].map(n => `<button class="${v === n ? "on" : ""}" data-a="gr" data-id="${s.id}" data-v="${n}">${n}</button>`).join("")}</div>`;
+}
+
+function vHome() {
+  let h = clsPicker(); if (!S.classes.length) return h;
+  const c = curCls(), sb = curSubj();
+  const R = { day: stats(c, ui.date, ui.date), week: stats(c, addDays(ui.date, -6), ui.date), all: stats(c, "0000", "9999") };
+  const L = { day: "Kunning eng yaxshisi", week: "Haftaning eng yaxshisi", all: "Umumiy eng yaxshi" };
+  h += `<div class="champs">${["day", "week", "all"].map(k => { const t = R[k][0] && R[k][0].score > 0 ? R[k][0] : null;
+    return `<div class="card champ${t ? " r1" : ""}"><div class="sub">${L[k]}</div><div class="em">${t ? "🏆" : "—"}</div><b>${t ? esc(t.s.name) + " 👑" : "Hali yo'q"}</b>${t ? `<div class="sub">${t.score} ball</div>` : ""}</div>`; }).join("")}</div>`;
+  h += `<div class="card"><div class="seg">${[["day", "Kun"], ["week", "Hafta"], ["all", "Umumiy"]].map(t => `<button class="${ui.rk === t[0] ? "on" : ""}" data-a="rk" data-id="${t[0]}">${t[1]}</button>`).join("")}</div>
+  <div class="sub" style="margin-bottom:4px">Ball = kelgan kun × 5 + baholar yig'indisi. Hafta = oxirgi 7 kun.</div>`;
+  h += R[ui.rk].length ? R[ui.rk].map((t, i) => { const top = t.score > 0 && i < 3;
+    return `<div class="${top ? "rk r" + (i + 1) : "row"}"><div class="name"><b>${i + 1}. ${esc(t.s.name)}${top ? " " + ["👑", "😎", "⚡"][i] : ""}</b></div>
+  <b class="pt" style="${top ? "" : "color:var(--ac)"}">${t.score} ball</b></div>`; }).join("") : `<div class="empty">O'quvchi yo'q</div>`;
+  return h + "</div>";
+}
+
+function vAtt() {
+  let h = clsPicker(); if (!S.classes.length) return h;
+  const c = curCls(), a = S.att[ui.date] || {}, sb = curSubj();
+  h += subjPicker();
+  const came = c.students.filter(s => a[s.id] === 1).length, miss = c.students.filter(s => a[s.id] === 0).length;
+  h += `<div class="card"><h3>Davomat <span class="sub">✅ ${came} · ❌ ${miss} · jami ${c.students.length}</span></h3>`;
+  h += c.students.length ? c.students.map(s => `<div class="srow"><div class="sh"><div class="name">${esc(s.name)}</div>
+  <button class="st ${a[s.id] === 1 ? "ok" : a[s.id] === 0 ? "no" : ""}" data-a="att" data-id="${s.id}">${a[s.id] === 1 ? "✅" : a[s.id] === 0 ? "❌" : "⬜"}</button></div>${gline(s, sb)}</div>`).join("")
+    + `<button class="pri" style="width:100%;margin-top:10px" data-a="all">Hammasi keldi</button>` : `<div class="empty">O'quvchi yo'q</div>`;
+  return h + "</div>";
+}
+
+function vGr() {
+  let h = clsPicker(); if (!S.classes.length) return h;
+  const c = curCls(), sb = curSubj();
+  h += subjPicker() + `<div class="card">`;
+  h += c.students.length ? c.students.map(s => `<div class="srow"><div class="name">${esc(s.name)}</div>${gline(s, sb)}</div>`).join("") : `<div class="empty">O'quvchi yo'q</div>`;
+  return h + "</div>";
+}
+
+function vSubj() {
+  return `<div class="card"><h3>Yangi fan / darslik</h3><input id="sn" placeholder="Fan nomi"><input id="sb" placeholder="Darslik nomi (ixtiyoriy)">
+  <button class="pri" style="width:100%" data-a="addsubj">Qo'shish</button></div>
+  <div class="card"><h3>Fanlar (${S.subjects.length})</h3>${S.subjects.map((s, i) => `<div class="row"><div class="name">${i + 1}. ${esc(s.name)}<div class="sub">${s.book ? "📖 " + esc(s.book) : ""}</div></div>
+  <button class="x" data-a="delsubj" data-id="${s.id}">✕</button></div>`).join("")}</div>`;
+}
+
+function vCls() {
+  const c = viewCls();
+  if (c && ui.sv) {
+    const s = c.students.find(x => x.id === ui.sv);
+    if (s) {
+      let came = 0, miss = 0;
+      for (const d in S.att) { if (S.att[d][s.id] === 1) came++; else if (S.att[d][s.id] === 0) miss++; }
+      const r = agg([s.id]), a = tot(r);
+      return `<button class="bk" data-a="back">‹ ${esc(c.name)}</button>
+      <div class="card"><h3 style="font-size:22px">${esc(s.name)}</h3><div class="sub">✅ keldi ${came} kun · ❌ kelmadi ${miss} kun · o'rtacha ${a ? a.toFixed(1) : "–"}</div></div>
+      ${stuBars(s.id)}<button class="x" data-a="delstu" data-id="${s.id}">O'quvchini o'chirish</button>`;
+    }
+    ui.sv = null;
+  }
+  if (c) {
+    return `<button class="bk" data-a="back">‹ Guruhlar</button>
+    <div class="card"><h3>${esc(c.name)} — fanlar bo'yicha o'rtacha</h3>${subjBars(agg(c.students.map(s => s.id)))}</div>
+    <div class="card"><h3>O'quvchilar (${c.students.length})</h3>${c.students.map((s, i) => { const a = tot(agg([s.id]));
+      return `<div class="row cl2" data-a="openstu" data-id="${s.id}"><div class="name">${i + 1}. ${esc(s.name)}<div class="sub">${a ? "o'rtacha " + a.toFixed(1) : "baho yo'q"}</div></div><span class="chev">›</span></div>`; }).join("") || `<div class="empty">O'quvchi yo'q</div>`}
+    <input id="stn" placeholder="O'quvchi ismi" style="margin-top:12px"><button class="pri" style="width:100%" data-a="addstu">O'quvchi qo'shish</button></div>
+    <button class="x" data-a="delcls">Guruhni o'chirish</button>`;
+  }
+  let h = S.classes.length ? `<h3 style="margin:2px 4px 10px">👥 Guruhlar</h3>` : "";
+  h += S.classes.map(k => { const a = tot(agg(k.students.map(s => s.id)));
+    return `<div class="card cl" data-a="opencls" data-id="${k.id}"><div><b style="font-size:18px">${esc(k.name)}</b><div class="sub">${k.students.length} o'quvchi${a ? " · o'rtacha " + a.toFixed(1) : ""}</div></div><span class="chev">›</span></div>`; }).join("");
+  return h + `<div class="card"><h3>Yangi guruh</h3><input id="cn" placeholder="Masalan: 5-A"><button class="pri" style="width:100%" data-a="addcls">Qo'shish</button></div>`;
+}
+
+function render() {
+  document.documentElement.dataset.theme = S ? S.theme : "blue";
+  const app = document.getElementById("app");
+  if (ADMIN_IDS.length && !ADMIN_IDS.includes(uid)) {
+    app.innerHTML = `<div class="card empty" style="margin-top:40vh">🔒 Ruxsat yo'q<br>Bu ilova faqat o'qituvchilar uchun</div>`; return;
+  }
+  const T = [["home", "🏆", "Reyting"], ["att", "✅", "Davomat"], ["gr", "⭐", "Baholar"], ["subj", "📚", "Fanlar"], ["cls", "👥", "Sinflar"]];
+  const body = !S ? "" : { home: vHome, att: vAtt, gr: vGr, subj: vSubj, cls: vCls, prof: vProf }[ui.tab]();
+  let md = "";
+  if (ui.pend) md = `<div class="ov"><div class="md"><div style="font-size:40px">⚠️</div><b style="font-size:18px">Diqqat!</b>
+    <p><b>${esc(ui.pend.name)}</b> ga <b style="font-size:18px">${ui.pend.v}</b> baho qo'yilmoqda.<br>Baho qo'yilgandan keyin uni o'zgartirib bo'lmaydi.</p>
+    <div class="btns"><button data-a="gno">Bekor qilish</button><button class="pri" data-a="gok">OK</button></div></div></div>`;
+  else if (ui.cf) md = `<div class="ov"><div class="md"><div style="font-size:40px">❓</div><p><b>${esc(ui.cf.t)}</b></p>
+    <div class="btns"><button data-a="cfno">Bekor qilish</button><button class="pri" data-a="cfyes">OK</button></div></div></div>`;
+  else if (ui.msg) md = `<div class="ov"><div class="md"><div style="font-size:40px">ℹ️</div><p>${esc(ui.msg)}</p><div class="btns"><button class="pri" data-a="mok">OK</button></div></div></div>`;
+  if (!S) { app.innerHTML = (!R.list.length || ui.scr === "reg" ? vReg() : ui.scr === "login" ? vLogin() : vAccs()) + md; return; }
+  const th = [["blue", "linear-gradient(135deg,#0a1330,#2563eb)"], ["pink", "linear-gradient(135deg,#0b0b10,#ec4899)"], ["white", "linear-gradient(135deg,#fff,#bcd8ff)"]];
+  app.innerHTML = `<div class="top"><div class="who" data-a="tab" data-id="prof">${avatar(42, PR)}<div><b>${esc(PR.first)}</b><div class="sub">📒 Maktab jurnali</div></div></div><div class="dots">${th.map(t => `<div class="dot ${S.theme === t[0] ? "on" : ""}" style="background:${t[1]}" data-a="theme" data-id="${t[0]}"></div>`).join("")}</div></div>${body}${md}
+  <div class="nav">${T.map(t => `<button class="${ui.tab === t[0] ? "on" : ""}" data-a="tab" data-id="${t[0]}"><span>${t[1]}</span>${t[2]}</button>`).join("")}</div>`;
+}
+
+const val = id => (document.getElementById(id) || {}).value || "";
+const NAVONLY = ["theme", "tab", "rk", "pcls", "subj", "opencls", "openstu", "back", "gno", "mok", "pgender", "obg", "pickphoto", "toacc", "toreg", "tologin", "logout", "cfno"];
+const ask = (t, a, id) => { ui.cf = { t, a, id }; render(); };
+document.addEventListener("click", e => { const b = e.target.closest("[data-a]"); if (b) act(b.dataset.a, b.dataset.id, b); });
+function act(a, id, b, ok) {
+  if (tg && tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+  if (a === "theme") S.theme = id;
+  else if (a === "eye") { const i = document.getElementById(id); i.type = i.type === "password" ? "text" : "password"; b.textContent = i.type === "password" ? "👁" : "🙈"; return; }
+  else if (a === "pickphoto") { document.getElementById("pf").click(); return; }
+  else if (a === "delphoto") PR.photo = "";
+  else if (a === "pgender") { PR.first = val("pfn"); PR.last = val("pfl"); PR.age = parseInt(val("pfa"), 10) || PR.age; PR.gender = id; }
+  else if (a === "psave") {
+    const f = val("pfn").trim(), l = val("pfl").trim(), ag = parseInt(val("pfa"), 10);
+    if (!f || !l) { ui.msg = "Ism va familiyani yozing."; render(); return; }
+    if (!(ag >= MIN_AGE && ag <= 100)) { ui.msg = `O'qituvchi kamida ${MIN_AGE} yoshda bo'lishi kerak.`; render(); return; }
+    PR.first = f; PR.last = l; PR.age = ag;
+  }
+  else if (a === "obg") { readOb(); ui.ob.g = id; }
+  else if (a === "obgo") { doReg(); return; }
+  else if (a === "login") { doLogin(); return; }
+  else if (a === "toacc") ui.scr = "acc";
+  else if (a === "toreg") ui.scr = "reg";
+  else if (a === "tologin") { ui.scr = "login"; ui.lg = id; }
+  else if (a === "logout") {
+    if (!ok) return ask("Akkauntdan chiqasizmi?", a, id);
+    R.cur = null; useAcc(); ui.scr = "acc"; ui.tab = "home"; ui.pend = null;
+  }
+  else if (a === "tab") { if (id === "cls" && ui.tab === "cls") { ui.cv = null; ui.sv = null; } ui.tab = id; }
+  else if (a === "rk") ui.rk = id;
+  else if (a === "pcls") ui.cls = id;
+  else if (a === "subj") ui.subj = id;
+  else if (a === "opencls") { ui.cv = id; ui.sv = null; }
+  else if (a === "openstu") ui.sv = id;
+  else if (a === "back") { if (ui.sv) ui.sv = null; else ui.cv = null; }
+  else if (a === "att") {
+    const m = S.att[ui.date] = S.att[ui.date] || {};
+    if (m[id] === 1 && Object.keys(S.gr).some(k => k.startsWith(ui.date + "|") && S.gr[k][id])) {
+      ui.msg = "Bu o'quvchiga bugun baho qo'yilgan, shuning uchun uni \"kelmadi\" deb belgilab bo'lmaydi."; render(); return;
+    }
+    m[id] = m[id] === 1 ? 0 : 1;
+  }
+  else if (a === "all") { const m = S.att[ui.date] = S.att[ui.date] || {}; curCls().students.forEach(s => m[s.id] = 1); }
+  else if (a === "gr") {
+    const k = ui.date + "|" + curSubj().id;
+    if ((S.att[ui.date] || {})[id] !== 1 || (S.gr[k] && S.gr[k][id])) return;
+    const st = curCls().students.find(x => x.id === id);
+    ui.pend = { sid: id, v: +b.dataset.v, k, name: st ? st.name : "" }; render(); return;
+  }
+  else if (a === "gno") ui.pend = null;
+  else if (a === "cfno") ui.cf = null;
+  else if (a === "cfyes") { const c = ui.cf; ui.cf = null; act(c.a, c.id, b, true); return; }
+  else if (a === "mok") ui.msg = null;
+  else if (a === "gok") {
+    const p = ui.pend; ui.pend = null;
+    const m = S.gr[p.k] = S.gr[p.k] || {};
+    if (!m[p.sid] && (S.att[p.k.split("|")[0]] || {})[p.sid] === 1) m[p.sid] = p.v;
+  }
+  else if (a === "addsubj") { const n = val("sn").trim(); if (!n) return; S.subjects.push({ id: uidgen(), name: n, book: val("sb").trim() }); }
+  else if (a === "delsubj") { if (!ok) return ask("Fan o'chirilsinmi?", a, id); S.subjects = S.subjects.filter(s => s.id !== id); }
+  else if (a === "addcls") { const n = val("cn").trim(); if (!n) return; const c = { id: uidgen(), name: n, students: [] }; S.classes.push(c); ui.cv = c.id; ui.cls = c.id; }
+  else if (a === "addstu") { const n = val("stn").trim(); if (!n) return; viewCls().students.push({ id: uidgen(), name: n }); }
+  else if (a === "delstu") { if (!ok) return ask("O'quvchi o'chirilsinmi?", a, id); const c = viewCls(); c.students = c.students.filter(s => s.id !== id); ui.sv = null; }
+  else if (a === "delcls") { if (!ok) return ask("Guruh o'chirilsinmi?", a, id); S.classes = S.classes.filter(c => c.id !== ui.cv); ui.cv = null; ui.cls = null; }
+  save(!NAVONLY.includes(a)); render();
+}
+document.addEventListener("change", e => {
+  if (e.target.id === "pf") { const f = e.target.files[0]; if (f) readPhoto(f); return; }
+  const k = e.target.dataset.c; if (!k) return;
+  ui[k] = e.target.value; render();
+});
+render();
+cloudLoad();
+</script>
+</body>
+</html>
